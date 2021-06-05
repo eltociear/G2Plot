@@ -51,6 +51,14 @@
         "en": "Liquid plot - custom style"
       },
       "screenshot": "https://gw.alipayobjects.com/mdn/rms_d314dd/afts/img/A*DIzzR6M4T94AAAAAAAAAAAAAARQnAQ"
+    },
+    {
+      "filename": "custom2.ts",
+      "title": {
+        "zh": "自定义水波图",
+        "en": "Custom liquid plot"
+      },
+      "screenshot": "https://gw.alipayobjects.com/mdn/rms_d314dd/afts/img/A*9MbOSZwdKmYAAAAAAAAAAAAAARQnAQ"
     }
   ]
 }

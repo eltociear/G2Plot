@@ -101,3 +101,7 @@ _*OutlineStyleCfg*_ 支持配置的样式如下：
 指标中心文本组件。
 
 `markdown:docs/common/statistic.zh.md`
+
+#### 图形标注
+
+`markdown:docs/common/annotations.zh.md`

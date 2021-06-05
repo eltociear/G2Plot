@@ -1,6 +1,6 @@
 import { Geometry } from '@antv/g2';
 import { get, isNil } from '@antv/util';
-import { interaction, animation, theme, scale } from '../../adaptor/common';
+import { interaction, animation, theme, scale, annotation } from '../../adaptor/common';
 import { Params } from '../../core/adaptor';
 import { flow, deepAssign, renderStatistic } from '../../utils';
 import { interval } from '../../adaptor/geometries';
@@ -62,26 +62,42 @@ function geometry(params: Params<LiquidOptions>): Params<LiquidOptions> {
   return params;
 }
 
-/**
- * 统计指标文档
- * @param params
- */
-export function statistic(params: Params<LiquidOptions>, updated?: boolean): Params<LiquidOptions> {
-  const { chart, options } = params;
+function transformStatisticOptions(options: LiquidOptions): LiquidOptions {
   const { statistic, percent, meta } = options;
 
-  // 先清空标注，再重新渲染
+  if (statistic) {
+    const metaFormatter = get(meta, ['percent', 'formatter']) || ((v) => `${(v * 100).toFixed(2)}%`);
+    let contentOpt = statistic.content;
+    if (contentOpt) {
+      contentOpt = deepAssign({}, contentOpt, {
+        content: !isNil(contentOpt.content) ? contentOpt.content : metaFormatter(percent),
+      });
+    }
+    return deepAssign({}, { statistic: { content: contentOpt } }, options);
+  }
+  return options;
+}
+
+/**
+ * 水波图 中心统计文本 & 图形标注
+ * @param params
+ * @param updated
+ * @returns
+ */
+export function liquidAnnotation(params: Params<LiquidOptions>, updated?: boolean): Params<LiquidOptions> {
+  const { chart, options } = params;
+
+  const { statistic, percent } = transformStatisticOptions(options);
+  // 先清空标注，再重新渲染 fixme 需要 G2 支持局部更新标注
   chart.getController('annotation').clear(true);
 
-  const metaFormatter = get(meta, ['percent', 'formatter']) || ((v) => `${(v * 100).toFixed(2)}%`);
-  let contentOpt = statistic.content;
-  if (contentOpt) {
-    contentOpt = deepAssign({}, contentOpt, {
-      content: !isNil(contentOpt.content) ? contentOpt.content : metaFormatter(percent),
-    });
-  }
+  // 先进行其他 annotations，再去渲染统计文本
+  flow(annotation())(params);
 
-  renderStatistic(chart, { statistic: { ...statistic, content: contentOpt }, plotType: 'liquid' }, { percent });
+  /** 中心文本 指标卡 */
+  if (statistic) {
+    renderStatistic(chart, { statistic, plotType: 'liquid' }, { percent });
+  }
 
   if (updated) {
     chart.render(true);
@@ -97,5 +113,5 @@ export function statistic(params: Params<LiquidOptions>, updated?: boolean): Par
  */
 export function adaptor(params: Params<LiquidOptions>) {
   // flow 的方式处理所有的配置到 G2 API (主题前置，会影响绘制的取色)
-  return flow(theme, geometry, statistic, scale({}), animation, interaction)(params);
+  return flow(theme, geometry, scale({}), liquidAnnotation, animation, interaction)(params);
 }

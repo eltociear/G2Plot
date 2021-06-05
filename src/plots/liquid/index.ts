@@ -2,7 +2,7 @@ import { VIEW_LIFE_CIRCLE, Event } from '@antv/g2';
 import { Plot } from '../../core/plot';
 import { Adaptor } from '../../core/adaptor';
 import { LiquidOptions } from './types';
-import { adaptor, statistic } from './adaptor';
+import { adaptor, liquidAnnotation } from './adaptor';
 import { DEFAULT_OPTIONS } from './constants';
 import { getLiquidData } from './utils';
 // register liquid shape
@@ -44,7 +44,7 @@ export class Liquid extends Plot<LiquidOptions> {
     this.updateOption({ percent });
 
     this.chart.data(getLiquidData(percent));
-    statistic({ chart: this.chart, options: this.options }, true);
+    liquidAnnotation({ chart: this.chart, options: this.options }, true);
 
     this.chart.emit(
       VIEW_LIFE_CIRCLE.AFTER_CHANGE_DATA,

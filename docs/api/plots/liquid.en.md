@@ -101,3 +101,7 @@ The wave configure for liquid plot, includes:
 Metric central text component.
 
 `markdown:docs/common/statistic.en.md`
+
+#### Annotations
+
+`markdown:docs/common/annotations.zh.md`
