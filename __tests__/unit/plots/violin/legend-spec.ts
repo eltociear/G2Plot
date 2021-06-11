@@ -140,5 +140,14 @@ describe('violin legend', () => {
       position: 'left',
       marker: { style: { fill: 'red' } },
     });
+
+    // 关闭 legend
+    const legendController = violin.chart.getController('legend');
+    const legendComponent = legendController.getComponents()[0].component;
+    expect(legendComponent.get('items')).not.toBeUndefined();
+    violin.update({ legend: false });
+    expect(legendComponent.get('items')).toBeUndefined();
+
+    violin.destroy();
   });
 });
